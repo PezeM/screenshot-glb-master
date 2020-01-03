@@ -18,7 +18,7 @@ async function makeScreenshot(input, output) {
         const inputPath = `${CONFIG.sourceFolder}/${input}`;
         const modelServer = new FileServer(path.dirname(inputPath));
         await modelServer.start()
-      
+
         const glbPath = `http://localhost:${modelServer.port}/${path.basename(inputPath)}`;
         const {page, browser} = await startBrowser({width: CONFIG.width, height: CONFIG.height, libPort: libServer.port});
       
@@ -51,6 +51,13 @@ async function start() {
         return;
     }
 
+    fs.exists(CONFIG.outputFolder, (exits) => {
+      if(!exits) {
+        console.log(`Output folder is not found. Creating new folder.`);
+        fs.mkdirSync(CONFIG.outputFolder);
+      }
+    });
+
     const promises = objectNames.map(name => {
         return concurrencyLimit(() => makeScreenshot(name, 
             `${CONFIG.outputFolder}/${name.split('.').slice(0, -1).join('.')}.${CONFIG.outputExtension}`));
@@ -61,6 +68,7 @@ async function start() {
     await libServer.start();
 
     await Promise.all(promises);
+
     console.log(`Finished converting ${objectNames.length} objects.`);
     process.exit();
 }

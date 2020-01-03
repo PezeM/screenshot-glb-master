@@ -58,8 +58,12 @@ module.exports = async ({width, height, libPort}) => {
   await page.setContent(data);
 
   page.exposeFunction('saveDataUrl', async (dataUrl, outputPath) => {
-    const buffer = parseDataUrl(dataUrl);
-    fs.writeFileSync(outputPath, buffer, 'base64');
+    try {
+      const buffer = parseDataUrl(dataUrl);
+      fs.writeFileSync(outputPath, buffer, 'base64')
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   page.exposeFunction('shutdown', async () => {

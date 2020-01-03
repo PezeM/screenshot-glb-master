@@ -88,3 +88,5 @@ package-lock.json
 # DynamoDB Local files
 .dynamodb/
 
+objects/
+output/
