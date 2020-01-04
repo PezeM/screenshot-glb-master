@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const log = require('simple-node-logger').createSimpleLogger('project.log');
 
 module.exports = async (page, {glbPath, outputPath, format, quality}) => {
   return new Promise((resolve) => {
@@ -30,15 +31,20 @@ module.exports = async (page, {glbPath, outputPath, format, quality}) => {
           return modelViewer.modelIsVisible;
         }, 10, 10000);
   
-        await window.saveDataUrl(
-          modelViewer.toDataURL(browser_format, browser_quality), 
-          browser_outputPath,
-        );
-  
+        try {
+          await window.saveDataUrl(
+            modelViewer.toDataURL(browser_format, browser_quality), 
+            browser_outputPath,
+          );
+        } catch (error) {
+          log.error(`Error while making screenshot of file ${browser_glbPath}.`);
+        }
+
+
         window.resolvePromise();
       }, glbPath, outputPath, format, quality);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   });
 }

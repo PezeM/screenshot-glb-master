@@ -6,5 +6,5 @@ module.exports = {
     quality: 0.9,
     width: 600,
     height: 800,
-    concurrencyLimit: 10,
+    concurrencyLimit: 3,
 }
